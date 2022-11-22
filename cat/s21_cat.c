@@ -135,47 +135,47 @@ void print_ch(FILE *fp, struct options MANAGER) {
 
 int main(int argc, char **argv) {
 
-//    char inp[1000] = "a.out -s /Users/daniilkolesnik/Desktop/origin/School21/cat/requirements.txt";
-//    const char d[2] = " ";
-//
-//    char **my_argv = malloc(sizeof(char *) * 20);
-//    int my_argc = 0;
-//
-//    char *token;
-//    token = strtok(inp, d);
-//
-//    int i = 0;
-//    while (token != NULL) {
-//        my_argv[i] = malloc(sizeof(char) * 100);
-//        my_argv[i] = token;
-//        //        printf("%d  %s\n", i, my_argv[i]); // THIS LINE PRINTS THE CONTENTS OF ARGV
-//
-//        token = strtok(NULL, d);
-//        i++;
-//        my_argc = i;
-//    }
-//
-//    FILE *fp = fopen(my_argv[my_argc - 1], "rb");
-//    if (fp != NULL) {
-//        struct options MAN;
-//        MAN = constructor(my_argc, my_argv);
-//
-//
-//        print_ch(fp, MAN);
-//        fclose(fp);
-//    }
+    char inp[1000] = "a.out -s /Users/daniilkolesnik/Desktop/origin/School21/cat/requirements.txt";
+    const char d[2] = " ";
 
+    char **my_argv = malloc(sizeof(char *) * 20);
+    int my_argc = 0;
 
-    FILE *fp = fopen(argv[argc - 1], "rb");
+    char *token;
+    token = strtok(inp, d);
+
+    int i = 0;
+    while (token != NULL) {
+        my_argv[i] = malloc(sizeof(char) * 100);
+        my_argv[i] = token;
+        //        printf("%d  %s\n", i, my_argv[i]); // THIS LINE PRINTS THE CONTENTS OF ARGV
+
+        token = strtok(NULL, d);
+        i++;
+        my_argc = i;
+    }
+
+    FILE *fp = fopen(my_argv[my_argc - 1], "rb");
     if (fp != NULL) {
         struct options MAN;
-        MAN = constructor(argc, argv);
+        MAN = constructor(my_argc, my_argv);
+
+
         print_ch(fp, MAN);
         fclose(fp);
-    } else {
-        printf("No such file or directory");
-        exit(1);
     }
+
+
+//    FILE *fp = fopen(argv[argc - 1], "rb");
+//    if (fp != NULL) {
+//        struct options MAN;
+//        MAN = constructor(argc, argv);
+//        print_ch(fp, MAN);
+//        fclose(fp);
+//    } else {
+//        printf("No such file or directory");
+//        exit(1);
+//    }
 
     return 0;
 }
