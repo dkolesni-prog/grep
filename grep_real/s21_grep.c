@@ -2,9 +2,37 @@
 #include "s21_grep.h"
 
 /*
- * TODO: debug count files
+ * TODO:
  * */
 
+
+char **get2dAR(int entries) {
+    char **result = malloc(sizeof(char *) * entries);
+    for (int i = 0; i < entries; ++i) {
+        result[i] = malloc(sizeof(char) * 50);
+    }
+    return result;
+}
+
+int file_indicator(char *arg) {
+    int r_comp;
+    int return_value = -1;
+    regex_t regex;
+    r_comp = regcomp(&regex, ".txt", 0);
+    return_value = regexec(&regex, arg, 0, NULL, 0);
+    return return_value; // returns 0 if .txt was found in arg
+}
+
+int countfiles(int argc, char **argv) {
+    int total = 0;
+    for (int i = 0; i < argc; ++i) {
+        char *current = argv[i];
+        if (file_indicator(current) == 0) {
+            total++;
+        }
+    }
+    return total;
+}
 
 void parse_flags(int argc, char **argv, struct options *MANAGER) {
     int c;
@@ -47,34 +75,37 @@ void parse_flags(int argc, char **argv, struct options *MANAGER) {
     }
 }
 
-int file_indicator(char *arg) {
-    int r_comp;
-    int return_value = -1;
-    regex_t regex;
-    r_comp = regcomp(&regex, ".txt", 0);
-    return_value = regexec(&regex, arg, 0, NULL, 0);
-    return return_value; // returns 0 if .txt was found
-}
 
-int countfiles(int argc, char **argv) {
-    int total = 0;
+char *parse_regex(int argc, char **argv) {
+
+    char *pattern;
+
+    char *current;
     for (int i = 0; i < argc; ++i) {
-        char *current = argv[i];
-        if (file_indicator(current) == 0)
+        current = argv[i];
+        int len_cur = strlen(current);
+        if ((current[0] == current[len_cur - 1]) && (current[0] == 39)) {
+            pattern = current;
+            return pattern;
+        }
     }
+    exit(1); // pattern not found
 }
 
-char **parse_files(int argc, char **argv, struct options *MANAGER) { // PARSE THESE WITH REGEX
-    parse_flags(argc, argv, MANAGER);
+char **parse_files(int argc, char **argv) { // PARSE THESE WITH REGEX
 
-    char **filenames;
+
+    int n_files = 0;
+    n_files = countfiles(argc, argv);
+
+    char **filenames = get2dAR(n_files);
     int file_i = 0;
-    int count_files;
+
 
     int count_options = 0;
     int regex_index = 0;
 
-    for (int i = 1; i < argc - 1; ++i) {
+    for (int i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
             count_options++;
             continue;
@@ -86,8 +117,8 @@ char **parse_files(int argc, char **argv, struct options *MANAGER) { // PARSE TH
                 continue;
             }
         }
-
-        if (file_indicator(argv[i]) == 0) {
+        char *current = argv[i];
+        if (file_indicator(current) == 0) {
             char *to_put_in_array = argv[i];
             filenames[file_i] = argv[i];
             file_i++;
@@ -95,53 +126,44 @@ char **parse_files(int argc, char **argv, struct options *MANAGER) { // PARSE TH
     }
 
 
-    return 0;
+    return filenames;
 }
 
 
 int main(int argc, char **argv) {
 
-//
-//    for (int i = 0; i < argc; ++i) {
-//        printf("%d %s\n", i, argv[i]);
-//    }
-
-//    regex_t regex;
-//    int return_value,
-//    return_value1, return_value2;
-//    return_value = regcomp(&regex,"ice",0);
-//    return_value1 = regexec(&regex,"icecream",0,NULL,0);
-//    return_value2 = regexec(&regex,"anotherstring",0,NULL,0);
-//
-//    printf("%d\n%d",return_value1, return_value2);
-//
-//    int t = 7;
-
-
-
-
-    char inp[1000] = "a.out -e -i -v -c -l -n -h -s -f -o 'reg_ex' test1.txt test2.txt test3.txt";
+    char inp[1000] = "a.out -e -i -v -c -l -n -h -s -f -o 'regular_expression' test1.txt test2.txt test3.txt";
     const char d[2] = " ";
     char **my_argv = malloc(sizeof(char *) * 20);
     int my_argc = 0;
-
     char *token;
     token = strtok(inp, d);
     int i = 0;
     while (token != NULL) {
         my_argv[i] = malloc(sizeof(char) * 100);
         my_argv[i] = token;
-        printf("%d  %s\n", i, my_argv[i]); // THIS LINE PRINTS THE CONTENTS OF ARGV
+//        printf("%d  %s\n", i, my_argv[i]); // THIS LINE PRINTS THE CONTENTS OF ARGV
         token = strtok(NULL, d);
         i++;
         my_argc = i;
     }
 
 
-    struct options MANAGER;  // структура, которая отвечает за опции
+    struct options MANAGER;  // структура, которая отвечает за опции OPTIONS +
+    parse_flags(my_argc, my_argv, &MANAGER);
+
+    char *regex = "no expression was entered";
+    regex = parse_regex(my_argc, my_argv);
+    printf("\nOUR REGULAR EXPRESSION: %s\n", regex);
+
     char **files;
-    files = parse_files(my_argc, my_argv, &MANAGER); // функция, которая парсит командную строку и
+    files = parse_files(my_argc, my_argv); // функция, которая парсит командную строку и
     // возвращает массив с названиями файлов
+
+    for (int j = 0; j < 3; ++j) {
+        char *current = files[j];
+        printf("%s\n", files[j]);
+    }
     int t = 4;
 
 

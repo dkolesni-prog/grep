@@ -28,10 +28,13 @@ struct options {
 
 };
 
-
+char** get2dAR(int entries);
 int file_indicator(char *arg);
+int countfiles(int argc, char **argv);
+
 void parse_flags(int argc, char **argv, struct options *MANAGER);
-char **parse_files(int argc, char **argv, struct options *MANAGER);
+char *parse_regex(int argc, char **argv);
+char **parse_files(int argc, char **argv);
 int reader(struct options *MANAGER, char** pattern, char *filename);
 
 #endif //GREP_S21_GREP_H
