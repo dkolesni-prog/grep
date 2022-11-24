@@ -13,7 +13,7 @@
 #include <regex.h>
 
 struct options {
-    int e; // поиск записи по шаблону
+    int e; // поиск записи по шаблонам
     int i; // perform case insensetive matching
     int v; // выбрать записи, которые не совпадают с шаблоном
     int c; // вывести количество записей, которые подходят под описание

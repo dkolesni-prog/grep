@@ -2,7 +2,8 @@
 #include "s21_grep.h"
 
 /*
- * TODO:
+ * Function parse_flags misbehaves when encounters -eeeeeee
+ *
  * */
 
 
@@ -23,6 +24,8 @@ int file_indicator(char *arg) {
     return return_value; // returns 0 if .txt was found in arg
 }
 
+
+
 int countfiles(int argc, char **argv) {
     int total = 0;
     for (int i = 0; i < argc; ++i) {
@@ -36,11 +39,13 @@ int countfiles(int argc, char **argv) {
 
 void parse_flags(int argc, char **argv, struct options *MANAGER) {
     int c;
+    int e_count = 0;
     char *optstring = "eivclnhsfo";
     while ((c = getopt(argc, argv, optstring)) != -1) {
         switch (c) {
             case 'e':
-                MANAGER->e = 1;
+                e_count++;
+                MANAGER->e = e_count;
                 break;
             case 'i':
                 MANAGER->i = 1;
@@ -103,7 +108,7 @@ char **parse_files(int argc, char **argv) { // PARSE THESE WITH REGEX
 
 
     int count_options = 0;
-    int regex_index = 0;
+    int regex_number = 0;
 
     for (int i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
@@ -113,7 +118,7 @@ char **parse_files(int argc, char **argv) { // PARSE THESE WITH REGEX
         if (argv[i][0] == 39) {
             int len = strlen(argv[i]);
             if (argv[i][len - 1] == 39) {
-                regex_index = i;
+                regex_number = i;
                 continue;
             }
         }
@@ -132,7 +137,7 @@ char **parse_files(int argc, char **argv) { // PARSE THESE WITH REGEX
 
 int main(int argc, char **argv) {
 
-    char inp[1000] = "a.out -e -i -v -c -l -n -h -s -f -o 'regular_expression' test1.txt test2.txt test3.txt";
+    char inp[1000] = "a.out -e -i -e -v -c -l -n -h -s -f -o 'regular_expression' test1.txt test2.txt test3.txt";
     const char d[2] = " ";
     char **my_argv = malloc(sizeof(char *) * 20);
     int my_argc = 0;
@@ -152,6 +157,10 @@ int main(int argc, char **argv) {
     struct options MANAGER;  // структура, которая отвечает за опции OPTIONS +
     parse_flags(my_argc, my_argv, &MANAGER);
 
+    if (MANAGER.e > 1) {
+
+    }
+
     char *regex = "no expression was entered";
     regex = parse_regex(my_argc, my_argv);
     printf("\nOUR REGULAR EXPRESSION: %s\n", regex);
@@ -159,6 +168,9 @@ int main(int argc, char **argv) {
     char **files;
     files = parse_files(my_argc, my_argv); // функция, которая парсит командную строку и
     // возвращает массив с названиями файлов
+
+
+
 
     for (int j = 0; j < 3; ++j) {
         char *current = files[j];
