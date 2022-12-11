@@ -1,0 +1,2 @@
+A king with no subjectsINDICATor1, who only issues orders that can be followed string1,
+string2
